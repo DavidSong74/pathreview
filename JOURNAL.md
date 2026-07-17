@@ -1,18 +1,16 @@
 ## Week 7 — Issue selection
 
-**Issue link:** [paste link here]
+**Issue link:** https://github.com/DavidSong74/pathreview/tree/fix/147-resume-section-whitespace
 
-**Issue title:** [paste issue title here]
+**Issue title:** Resume section detection fails on text with leading whitespace
 
-**Tier:** [ ] Tier 1  [ ] Tier 2  [ ] Tier 3
+**Tier:** [x] Tier 1  [ ] Tier 2  [ ] Tier 3
 
 **Problem summary:**
-[In 3–5 sentences, in your own words: what the issue is (not a copy-paste of
-the title), what is currently broken or missing, and what a successful fix
-would accomplish. Naming the part of the codebase it affects is helpful context.]
+The problem here is that the resume section's detection system fails on text that input whitespaces in the beginning. This is probably because of a parsing error, since it is waiting for digits/alphabets to be inputted as the beginning letters. However, since an unexpected input is detected, the section detection system fails. 
 
-**Branch name:** [paste branch name here]
+**Branch name:** fix/147-resume-section-whitespace
 
-**Setup confirmation:** [ ] App runs locally at localhost:5173
+**Setup confirmation:** [x] App runs locally at localhost:5173
 
-**Cohort ledger:** [ ] Issue added to cohort ledger
+**Cohort ledger:** [x] Issue added to cohort ledger
