@@ -25,3 +25,17 @@
 
 1. Added a new test, `test_detect_sections_with_leading_whitespace`, in `tests/unit/test_resume_parser.py` (lines 146-163). It gives `_detect_sections()` resume text where the section headers ("Experience:", "Education:", "Skills:") are indented, and checks that all three sections still get detected.
 2. Ran it with `.venv/bin/pytest tests/unit/test_resume_parser.py::TestResumeParser::test_detect_sections_with_leading_whitespace -v` to reproduce the bug. The test fails right now, which confirms the bug: when the headers are indented, `_detect_sections()` finds nothing.
+
+## Week 8 — Reproduction & solution planning
+
+**Reproduction commit link:** https://github.com/DavidSong74/pathreview/commit/d943c775799fb5a2dbcbba31c8c244183ad13f04
+
+**Reproduction summary:**
+I wrote a new test, `test_detect_sections_with_leading_whitespace`, that feeds `_detect_sections()` resume text with indented section headers and asserts that Experience, Education, and Skills all still get detected. Running it against the current code confirms the bug: `detected_sections` comes back empty because the regex patterns are anchored with `^`/`\n` and don't allow for the leading whitespace.
+
+**PLAN.md link:** https://github.com/DavidSong74/pathreview/blob/fix/147-resume-section-whitespace/PLAN.md
+
+**Walkthrough video (recommended):** [link to your Loom video, ≤2 min — recommended, not graded]
+
+**Blockers or open questions:**
+None currently. One thing I'm keeping an eye on: issue #147 already has an open PR (#178) proposing a similar fix. I'm implementing independently and treating #178 only as a reference to sanity-check against afterward, per the course guidance that grading is based on my own artifacts — but if #178 merges before I submit, I may need to pick a different issue.
