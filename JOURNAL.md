@@ -20,3 +20,8 @@
 **Setup confirmation:** [x] App runs locally at localhost:5173
 
 **Cohort ledger:** [x] Issue added to cohort ledger
+
+## Week 7 — Reproducing the bug
+
+1. Added a new test, `test_detect_sections_with_leading_whitespace`, in `tests/unit/test_resume_parser.py` (lines 146-163). It gives `_detect_sections()` resume text where the section headers ("Experience:", "Education:", "Skills:") are indented, and checks that all three sections still get detected.
+2. Ran it with `.venv/bin/pytest tests/unit/test_resume_parser.py::TestResumeParser::test_detect_sections_with_leading_whitespace -v` to reproduce the bug. The test fails right now, which confirms the bug: when the headers are indented, `_detect_sections()` finds nothing.
