@@ -59,7 +59,7 @@ None. Still watching whether PR #178 (an existing fix for the same issue) merges
 
 ### Check-in 2 (end of week)
 
-**PR link:** [link to your submitted pull request]
+**PR link:** https://github.com/ascherj/pathreview/pull/449
 
 **Branch:** `fix/147-resume-section-whitespace`
 
