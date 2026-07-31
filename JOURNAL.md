@@ -39,3 +39,37 @@ I wrote a new test, `test_detect_sections_with_leading_whitespace`, that feeds `
 
 **Blockers or open questions:**
 None currently. One thing I'm keeping an eye on: issue #147 already has an open PR (#178) proposing a similar fix. I'm implementing independently and treating #178 only as a reference to sanity-check against afterward, per the course guidance that grading is based on my own artifacts — but if #178 merges before I submit, I may need to pick a different issue.
+
+## Week 9 — Solution building & PR submission
+
+### Check-in 1 (mid-week)
+
+**Current progress:**
+Implemented the fix from PLAN.md step 2: in `_detect_sections()` (`ingestion/parsers/resume_parser.py:132-137`), added `\s*` right after each `^`/`\n` anchor in the four section-header regex patterns, so a leading indentation before a header (e.g. `"    Education:"`) no longer prevents a match. The reproduction test from Week 7/8 (`test_detect_sections_with_leading_whitespace`) now passes, along with the three other tests noted in PLAN.md as failing for the same underlying reason (`test_parse_single_column_resume_text`, `test_parse_resume_no_work_experience`, `test_detect_sections`).
+
+Before touching anything I ran the full `tests/unit` suite and `ruff`/`black`/`mypy` on the file to record the baseline: 54 unit tests failing pre-existing (unrelated modules — faithfulness checker, PII scrubber, review service, etc.), plus two pre-existing failures in `test_resume_parser.py` itself (`test_parse_markdown_resume`, `test_strip_markdown_syntax` — a `_strip_markdown()` header-regex bug, not the section-detection bug I'm fixing) and two pre-existing lint issues (unsorted imports, a `B904` bare `raise` in `_parse_pdf`). After my change: 50 unit-suite failures (the 4 I fixed are gone, nothing else changed) and the same 2 pre-existing `test_resume_parser.py` failures, confirmed unaffected by diffing against a stashed copy of the original code. I also fixed the pre-existing `B904` issue (`raise ... from e`) since the pre-commit hook wouldn't let me commit otherwise — one-line, unrelated to the section-detection logic itself.
+
+**Next steps:**
+Push the branch, open a draft PR against `ascherj/pathreview` referencing issue #147 (filling in `.github/PULL_REQUEST_TEMPLATE.md` and documenting the pre-existing failures per the course guidance), get peer/mentor feedback in Slack, then mark it ready for review and finish Check-in 2.
+
+**Blockers:**
+None. Still watching whether PR #178 (an existing fix for the same issue) merges before mine is up — if it does I'll switch to a different open issue, per the plan noted in Week 8's blockers.
+
+---
+
+### Check-in 2 (end of week)
+
+**PR link:** [link to your submitted pull request]
+
+**Branch:** `fix/147-resume-section-whitespace`
+
+**What you built:**
+Fixed `_detect_sections()` in `ingestion/parsers/resume_parser.py` so section-header regexes tolerate leading whitespace (`^\s*`/`\n\s*` instead of bare `^`/`\n`), so indented resume text — common when text is extracted from PDFs — is parsed the same as flush-left text instead of returning an empty `detected_sections` list.
+
+**Tests added or updated:**
+`tests/unit/test_resume_parser.py` — added `test_detect_sections_with_leading_whitespace` (indented `Experience`/`Education`/`Skills` headers must still be detected). No other test files needed changes; three existing tests in this file that were failing for the same root cause now pass without modification.
+
+**Self-review confirmation:** [x] make check passes  [x] make test-unit passes
+*(Both pass modulo the pre-existing failures documented above and in the PR description — my change introduces no new failures. Verified specifically via `test_detect_sections_with_leading_whitespace` in `tests/unit/test_resume_parser.py:148-163` — the bug-reproduction test from Week 7/8, which failed against the original code and now passes against this fix.)*
+
+**Draft PR feedback received from:** [name or Slack handle, or "none"]
