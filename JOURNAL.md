@@ -73,3 +73,34 @@ Fixed `_detect_sections()` in `ingestion/parsers/resume_parser.py` so section-he
 *(Both pass modulo the pre-existing failures documented above and in the PR description — my change introduces no new failures. Verified specifically via `test_detect_sections_with_leading_whitespace` in `tests/unit/test_resume_parser.py:148-163` — the bug-reproduction test from Week 7/8, which failed against the original code and now passes against this fix.)*
 
 **Draft PR feedback received from:** [name or Slack handle, or "none"]
+
+## Week 10 — Iteration & reflection
+
+### Reviewer feedback
+
+**Feedback received:** [ ] Yes  [x] No — still awaiting review
+
+**Summary of feedback:**
+No reviewer comments have come back on PR #449 yet. The draft-PR peer/mentor feedback slot in Check-in 2 is also still unfilled — I didn't get a Slack review in before the PR went up, which I'm noting honestly rather than backfilling after the fact.
+
+**How you responded:**
+N/A — nothing to respond to yet. If feedback comes in after this entry is submitted, I'll follow up with a commit and a note here rather than editing this section retroactively.
+
+---
+
+### Reflection
+
+**What was harder than you expected?**
+The fix itself was trivial — four regex patterns, one `\s*` each. What actually took the time was everything around it: establishing an honest baseline before touching code (54 pre-existing unit-test failures, 2 of them in the very file I was editing but caused by an unrelated bug in `_strip_markdown()`), and then re-verifying after the fix that I hadn't quietly fixed or broken anything outside my scope. It would have been easy to eyeball "tests pass" and move on; proving *which* tests changed status, and confirming that with a stashed diff rather than a memory, took more discipline than the code change did. The pre-commit hook catching an unrelated `B904` lint issue in the same file was a small but real instance of the same lesson: touching a file means inheriting its existing mess, and I had to decide in the moment how much of that was in scope (answer: the one line blocking the commit, nothing more).
+
+**What did you learn about working in a large codebase?**
+The gap between "my fix works" and "my fix is safe to merge" is almost entirely about scope discipline in someone else's code. In a solo project I'd never think twice about running the full suite before and after a change — here it was load-bearing, because the codebase has real, pre-existing failures I had no part in, and the only way to make a defensible claim in a PR description is to diff against a baseline, not just report the final state. I also learned to read a bug report skeptically before trusting it: the issue and PLAN.md both described the fix precisely, but I still had to check whether the "affected tests" list was complete and whether my change touched anything not on that list (it didn't, but I wouldn't have known without checking).
+
+**How did AI tools help — and where did they fall short?**
+AI assistance (Claude Code) was most useful for the mechanical-but-tedious verification work: running the same test file and lint tools before and after the change, stashing/unstashing to isolate whether a failure was pre-existing, and cross-referencing PLAN.md's claims against the actual test output line by line. That's exactly the kind of repetitive, easy-to-get-wrong bookkeeping where I'd otherwise be tempted to skip a step. Where it fell short was judgment about scope and honesty in the journal itself — early on it presented "implemented and tested" as more complete than it was, skipping over the fact that the branch hadn't been pushed and no PR existed yet. I had to explicitly ask "did you do all that was required?" to get an accurate accounting. The lesson isn't that the tool did the verification wrong — it's that I still need to be the one checking that reported progress matches actual repo state, not just trusting the tool's summary.
+
+**What would you do differently if you started over?**
+I'd push the branch and open the draft PR much earlier — right after the reproduction test in Week 7 — instead of treating it as one of the last steps. Opening it early would have surfaced the review the process is designed around (draft feedback before finalizing) instead of leaving that step to happen after the fix was already done. I'd also lock in the pre-existing-failure baseline as its own artifact (a saved test-output snapshot) at the very start of Week 7, rather than reconstructing it from a `git stash` days later — it would have made the "no regressions" claim in the PR trivially verifiable instead of something I had to redo.
+
+**What are you most proud of from this module?**
+Not the fix — it's four characters of regex. I'm most proud of the verification discipline I built up around it: being able to say precisely "54 failures before, 50 after, and here's the diff that proves the 4 gone are the 4 I meant to fix" instead of a vague "tests pass now." That's a habit I want to carry into future contributions to codebases I don't own, where an unverified "looks fine to me" is exactly how regressions slip through review.
